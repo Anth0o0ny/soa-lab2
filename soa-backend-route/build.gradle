@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group = 'org.anth0o0ny'
+version = '1.0-SNAPSHOT'
+
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+ext {
+    junitVersion = '5.9.2'
+}
+
+sourceCompatibility = '21'
+targetCompatibility = '21'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    implementation('org.glassfish.jersey.media:jersey-media-json-jackson:3.1.9')
+    implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.0')
+    implementation 'org.hibernate.orm:hibernate-core:6.6.1.Final'
+    implementation('org.hibernate.validator:hibernate-validator:7.0.5.Final')
+
+    compileOnly 'jakarta.platform:jakarta.jakartaee-web-api:11.0.0-M4'
+
+    implementation('org.anth0o0ny:soa-commons:0.0.7-SNAPSHOT')
+
+    implementation 'org.postgresql:postgresql:42.7.4'
+
+    implementation("org.projectlombok:lombok:1.18.34")
+    annotationProcessor("org.projectlombok:lombok:1.18.34")
+    implementation("org.mapstruct:mapstruct:1.6.0")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.0")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+}
+
+test {
+    useJUnitPlatform()
+}

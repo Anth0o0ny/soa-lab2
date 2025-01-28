@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  route-service:
+    build: ./soa-backend-route
+    container_name: route-service
+    networks:
+      - develop
+    ports:
+      - "8444:8443"
+    environment:
+      - CITY_SERVICE_URL=https://city-service:8443/soa-backend-city-1.0-SNAPSHOT/api/city
+  city-service:
+    build: ./soa-backend-city
+    container_name: city-service
+    depends_on:
+      - db
+    networks:
+      - develop
+    ports:
+      - "8443:8443"
+      - "9993:9993"
+#  frontend:
+#    build: ./soa-frontend
+#    container_name: frontend
+#    networks:
+#      - develop
+#    ports:
+#      - "8081:80"
+#    environment:
+#      - VITE_MOVIE_URL=https://localhost:8443/soa-lab2-movie-1.0-SNAPSHOT/api/v1/movie
+#      - VITE_OSCAR_URL=https://localhost:8444/api/v1/oscar
+  db:
+    image: postgres
+    container_name: soa-db
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=soa-db
+    command: postgres -p 5432
+    volumes:
+      - ./soa-backend-city/deployment/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - develop
+    ports:
+      - "5432:5432"
+
+networks:
+  develop:
+
+volumes:
+  postgres_data:
+    driver: local
