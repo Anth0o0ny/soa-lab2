@@ -36,6 +36,8 @@ public class CityRepository {
     }
 
     public PageDto<City> findAll(int page, int size, List<String> sortParams, List<FilterCriterion> filters) {
+        System.out.println("Received request with params: page=" + page + ", size=" + size + ", filters=" + filters);
+
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<City> cq = cb.createQuery(City.class);
         Root<City> city = cq.from(City.class);
@@ -53,6 +55,8 @@ public class CityRepository {
                 .setFirstResult(page * size)
                 .setMaxResults(size)
                 .getResultList();
+
+        System.out.println("Fetched cities: " + cities.size());
 
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<City> cityCount = countQuery.from(City.class);
@@ -97,8 +101,9 @@ public class CityRepository {
 
     // Get Cities by Government less than specified
     public List<City> findByGovernmentLessThan(Government government) {
-        return entityManager.createQuery("SELECT c FROM City c WHERE c.government < :government", City.class)
-                .setParameter("government", government)
+        return entityManager.createQuery(
+                        "SELECT c FROM City c WHERE c.government.ordinal() < :governmentOrdinal", City.class)
+                .setParameter("governmentOrdinal", government.ordinal())
                 .getResultList();
     }
 

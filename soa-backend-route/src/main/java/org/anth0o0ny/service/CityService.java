@@ -1,10 +1,10 @@
 package org.anth0o0ny.service;
 
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.GenericType;
 import org.anth0o0ny.dto.CityDto;
 import org.anth0o0ny.dto.PageDto;
 
@@ -17,16 +17,19 @@ public class CityService {
     private static final String CITIES_API_URL = System.getenv("CITY_SERVICE_URL");
 
     public List<CityDto> getAllCities() {
-        try (Client client = ClientBuilder.newClient()) {
+        try (Client client = ClientBuilder.newBuilder().hostnameVerifier((hostname, session) -> true).build()) {
+            // Десериализация ответа в PageDto<CityDto>
             PageDto<CityDto> page = client.target(CITIES_API_URL)
                     .request(MediaType.APPLICATION_JSON)
-                    .get(PageDto.class);
+                    .get(new GenericType<PageDto<CityDto>>(){});
 
-            return page.getContent();
+            return page.getContent();  // Извлекаем список из обертки
         } catch (Exception e) {
+            e.printStackTrace();  // Логируем ошибку
             throw new RuntimeException("Failed to fetch cities from first service", e);
         }
     }
+
 
     public CityDto getCityWithLargestArea() {
         return getAllCities().stream()
@@ -63,4 +66,3 @@ public class CityService {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 }
-

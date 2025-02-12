@@ -7,7 +7,9 @@ services:
     networks:
       - develop
     ports:
-      - "8444:8443"
+      - "4848:4848"
+      - "8080:8080"
+      - "8181:8181"
     environment:
       - CITY_SERVICE_URL=https://city-service:8443/soa-backend-city-1.0-SNAPSHOT/api/city
   city-service:
@@ -20,16 +22,19 @@ services:
     ports:
       - "8443:8443"
       - "9993:9993"
-#  frontend:
-#    build: ./soa-frontend
-#    container_name: frontend
-#    networks:
-#      - develop
-#    ports:
-#      - "8081:80"
-#    environment:
-#      - VITE_MOVIE_URL=https://localhost:8443/soa-lab2-movie-1.0-SNAPSHOT/api/v1/movie
-#      - VITE_OSCAR_URL=https://localhost:8444/api/v1/oscar
+  frontend:
+    build: ./soa-frontend
+    container_name: soa-frontend
+    networks:
+      - develop
+    ports:
+      - "8081:80"
+    depends_on:
+      - city-service
+      - route-service
+    environment:
+      - VITE_CITY_URL=https://localhost:8443/soa-backend-city-1.0-SNAPSHOT/api/city/
+      - VITE_ROUTE_URL=https://localhost:8181/soa-backend-route-1.0-SNAPSHOT/api/route/
   db:
     image: postgres
     container_name: soa-db

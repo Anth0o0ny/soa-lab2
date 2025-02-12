@@ -1,5 +1,6 @@
 package org.anth0o0ny.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -35,7 +36,8 @@ public class City {
     @NotNull
     @Column(name = "creation_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate = new Date();
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private Date creationDate;
 
     @Min(0)
     private int area;
