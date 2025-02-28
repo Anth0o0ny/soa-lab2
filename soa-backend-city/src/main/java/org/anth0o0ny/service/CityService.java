@@ -1,9 +1,5 @@
 package org.anth0o0ny.service;
 
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import org.anth0o0ny.dto.PageDto;
 import org.anth0o0ny.enums.Climate;
 import org.anth0o0ny.enums.Government;
@@ -13,15 +9,21 @@ import org.anth0o0ny.model.entity.City;
 import org.anth0o0ny.model.mapper.CityMapper;
 import org.anth0o0ny.repository.CityRepository;
 import org.anth0o0ny.utils.FilterCriterion;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@ApplicationScoped
+@Service
 public class CityService {
-    @Inject
+    @Autowired
     private CityRepository cityRepository;
-    @Inject
+    @Autowired
     private CityMapper mapper;
 
     private final List<String> allowedSortingFields = List.of("name", "coordinates.x", "coordinates.y", "id", "creationDate", "area", "population", "metersAboveSeaLevel", "climate", "government", "standardOfLiving", "age");

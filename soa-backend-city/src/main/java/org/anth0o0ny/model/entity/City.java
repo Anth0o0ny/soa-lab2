@@ -50,18 +50,18 @@ public class City {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "climate", columnDefinition = "climate_type")
+    @Column(name = "climate", columnDefinition = "climate")
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private Climate climate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "government", columnDefinition = "government_type")
+    @Column(name = "government", columnDefinition = "government")
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private Government government;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "standard_of_living", columnDefinition = "standard_of_living_type")
+    @Column(name = "standard_of_living", columnDefinition = "standard_of_living")
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private StandardOfLiving standardOfLiving;
 

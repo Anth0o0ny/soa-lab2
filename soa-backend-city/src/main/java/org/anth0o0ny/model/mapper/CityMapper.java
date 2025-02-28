@@ -6,7 +6,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 
-@Mapper(componentModel = "cdi")
+@Mapper(componentModel = "spring")
 public interface CityMapper {
     @Mapping(target = "id", ignore = true)
     City updateFields(@MappingTarget City existingCity, City newCity);

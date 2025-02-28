@@ -1,22 +1,28 @@
-package org.anth0o0ny.configuration;
-
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.container.ContainerResponseFilter;
-import jakarta.ws.rs.ext.Provider;
-
-import java.io.IOException;
-
-@Provider
-public class CORSFilter implements ContainerResponseFilter {
-
-    @Override
-    public void filter(ContainerRequestContext requestContext,
-                       ContainerResponseContext responseContext) throws IOException {
-        responseContext.getHeaders().add("Access-Control-Allow-Origin", "*");
-        responseContext.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
-        responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
-        responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
-    }
-}
-
+//package org.anth0o0ny.configuration;
+//
+//
+//import jakarta.servlet.Filter;
+//import jakarta.servlet.FilterChain;
+//import jakarta.servlet.ServletException;
+//import jakarta.servlet.ServletRequest;
+//import jakarta.servlet.ServletResponse;
+//import jakarta.servlet.annotation.WebFilter;
+//import jakarta.servlet.http.HttpServletResponse;
+//
+//import java.io.IOException;
+//
+//@WebFilter
+//public class CORSFilter implements Filter {
+//
+//    @Override
+//    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException, IOException {
+//        HttpServletResponse httpServletResponse = (HttpServletResponse) servletRequest;
+//        httpServletResponse.addHeader("Access-Control-Allow-Origin", "*");
+//        httpServletResponse.addHeader("Access-Control-Allow-Credentials", "true");
+//        httpServletResponse.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
+//        httpServletResponse.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+//        filterChain.doFilter(servletRequest, httpServletResponse);
+//    }
+//}
+//
+//

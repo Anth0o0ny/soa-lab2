@@ -1,7 +1,10 @@
 package org.anth0o0ny;
-import jakarta.ws.rs.ApplicationPath;
-import jakarta.ws.rs.core.Application;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@ApplicationPath("/api")
-public class SoaLab2CityApplication extends Application{
+@SpringBootApplication
+public class SoaLab2CityApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(SoaLab2CityApplication.class, args);
+    }
 }

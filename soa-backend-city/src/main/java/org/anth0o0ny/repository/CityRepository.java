@@ -1,11 +1,9 @@
 package org.anth0o0ny.repository;
 
 
-import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
-import jakarta.transaction.Transactional;
 import org.anth0o0ny.dto.PageDto;
 import org.anth0o0ny.dto.PageMetadata;
 import org.anth0o0ny.enums.Climate;
@@ -14,6 +12,7 @@ import org.anth0o0ny.enums.StandardOfLiving;
 import org.anth0o0ny.exception.SortingFormatException;
 import org.anth0o0ny.model.entity.City;
 import org.anth0o0ny.utils.FilterCriterion;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,13 +21,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Transactional
-@Stateless
+@Repository
 public class CityRepository {
 
     private final List<String> allowedSortingFields = List.of("name", "coordinates.x", "coordinates.y", "id", "creationDate", "area", "population", "metersAboveSeaLevel", "climate", "government", "standardOfLiving", "age");
 
-    @PersistenceContext(unitName = "CitySource")
+    @PersistenceContext
     private EntityManager entityManager;
 
     public Optional<City> findById(int id) {

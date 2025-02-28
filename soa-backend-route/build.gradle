@@ -16,14 +16,17 @@ ext {
     junitVersion = '5.9.2'
 }
 
-sourceCompatibility = '21'
-targetCompatibility = '21'
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
 dependencies {
+    implementation 'org.jboss.ejb3:jboss-ejb3-ext-api:2.2.0.Final'
     implementation('org.glassfish.jersey.media:jersey-media-json-jackson:3.1.9')
     implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.0')
     implementation 'org.hibernate.orm:hibernate-core:6.6.1.Final'

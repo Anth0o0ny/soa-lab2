@@ -1,55 +1,54 @@
 package org.anth0o0ny.controller;
 
 
-import jakarta.inject.Inject;
+
 import jakarta.validation.Valid;
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import org.anth0o0ny.dto.PageDto;
 import org.anth0o0ny.enums.Climate;
 import org.anth0o0ny.enums.Government;
 import org.anth0o0ny.enums.StandardOfLiving;
 import org.anth0o0ny.model.entity.City;
 import org.anth0o0ny.service.CityService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Path("/city")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/api/city")
 public class CityController {
 
-    @Inject
+    @Autowired
     private CityService cityService;
 
-    @GET
-    public Response getCities(
-            @QueryParam("page") @DefaultValue("0") int page,
-            @QueryParam("size") @DefaultValue("10") int size,
-            @QueryParam("sort") List<String> sort,
-            @QueryParam("name") String nameValue,
-            @QueryParam("name-filter") String nameFilter,
-            @QueryParam("id") String idValue,
-            @QueryParam("id-filter") String idFilter,
-            @QueryParam("population") String populationValue,
-            @QueryParam("population-filter") String populationFilter,
-            @QueryParam("coordinates.x") String coordinatesXValue,
-            @QueryParam("coordinates.x-filter") String coordinatesXFilter,
-            @QueryParam("coordinates.y") String coordinatesYValue,
-            @QueryParam("coordinates.y-filter") String coordinatesYFilter,
-            @QueryParam("area") String areaValue,
-            @QueryParam("area-filter") String areaFilter,
-            @QueryParam("metersAboveSeaLevel") String metersAboveSeaLevelValue,
-            @QueryParam("metersAboveSeaLevel-filter") String metersAboveSeaLevelFilter,
-            @QueryParam("climate") String climateValue,
-            @QueryParam("climate-filter") String climateFilter,
-            @QueryParam("government") String governmentValue,
-            @QueryParam("government-filter") String governmentFilter,
-            @QueryParam("standardOfLiving") String standardOfLivingValue,
-            @QueryParam("standardOfLiving-filter") String standardOfLivingFilter,
-            @QueryParam("age") String ageValue,
-            @QueryParam("age-filter") String ageFilter) {
+    @GetMapping
+    public ResponseEntity<PageDto<City>> getCities(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) List<String> sort,
+            @RequestParam(required = false) String nameValue,
+            @RequestParam(required = false) String nameFilter,
+            @RequestParam(required = false) String idValue,
+            @RequestParam(required = false) String idFilter,
+            @RequestParam(required = false) String populationValue,
+            @RequestParam(required = false) String populationFilter,
+            @RequestParam(required = false) String coordinatesXValue,
+            @RequestParam(required = false) String coordinatesXFilter,
+            @RequestParam(required = false) String coordinatesYValue,
+            @RequestParam(required = false) String coordinatesYFilter,
+            @RequestParam(required = false) String areaValue,
+            @RequestParam(required = false) String areaFilter,
+            @RequestParam(required = false) String metersAboveSeaLevelValue,
+            @RequestParam(required = false) String metersAboveSeaLevelFilter,
+            @RequestParam(required = false) String climateValue,
+            @RequestParam(required = false) String climateFilter,
+            @RequestParam(required = false) String governmentValue,
+            @RequestParam(required = false) String governmentFilter,
+            @RequestParam(required = false) String standardOfLivingValue,
+            @RequestParam(required = false) String standardOfLivingFilter,
+            @RequestParam(required = false) String ageValue,
+            @RequestParam(required = false) String ageFilter) {
 
         PageDto<City> cities = cityService.findAll(page, size, sort,
                 nameValue, nameFilter,
@@ -63,56 +62,48 @@ public class CityController {
                 governmentValue, governmentFilter,
                 standardOfLivingValue, standardOfLivingFilter,
                 ageValue, ageFilter);
-        return Response.ok(cities).build();
+        return ResponseEntity.ok(cities);
     }
 
-    @GET
-    @Path("/{id}")
-    public Response getCity(@PathParam("id") Integer id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<City> getCity(@PathVariable int id) {
         City city = cityService.findById(id);
-        return Response.ok(city).build();
+        return ResponseEntity.ok(city);
     }
 
-    @POST
-    public Response uploadCity(@Valid City city) {
+    @PostMapping
+    public ResponseEntity<Void> uploadCity(@Valid @RequestBody City city) {
         cityService.save(city);
-        return Response.status(Response.Status.CREATED).build();
+        return ResponseEntity.status(201).build();
     }
 
-    @PUT
-    @Path("/{id}")
-    public Response updateCity(@PathParam("id") Integer id, @Valid City city) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateCity(@PathVariable int id, @Valid @RequestBody City city) {
         cityService.update(id, city);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
-    @DELETE
-    @Path("/{id}")
-    public Response deleteCity(@PathParam("id") Integer id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCity(@PathVariable int id) {
         cityService.delete(id);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
-    @DELETE
-    @Path("/delete-by-climate")
-    public Response deleteCityByClimate(@QueryParam("climate") Climate climate) {
+    @DeleteMapping("/delete-by-climate")
+    public ResponseEntity<Void> deleteCityByClimate(@RequestParam Climate climate) {
         cityService.deleteByClimate(climate);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
-    @GET
-    @Path("/count-by-standard-of-living")
-    public Response countByStandardOfLiving(@QueryParam("standardOfLiving") String standardOfLiving) {
+    @GetMapping("/count-by-standard-of-living")
+    public ResponseEntity<Long> countByStandardOfLiving(@RequestParam String standardOfLiving) {
         long count = cityService.countByStandardOfLivingLessThan(StandardOfLiving.valueOf(standardOfLiving));
-        return Response.ok(count).build();
+        return ResponseEntity.ok(count);
     }
 
-    @GET
-    @Path("/government-less-than")
-    public Response findByGovernmentLessThan(
-            @QueryParam("government") Government government) {
+    @GetMapping("/government-less-than")
+    public ResponseEntity<List<City>> findByGovernmentLessThan(@RequestParam Government government) {
         List<City> cities = cityService.findByGovernmentLessThan(government);
-        return Response.ok(cities).build();
+        return ResponseEntity.ok(cities);
     }
 }
-

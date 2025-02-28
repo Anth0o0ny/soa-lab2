@@ -1,27 +1,74 @@
 version: '3.8'
 
 services:
-  route-service:
+  route-service1:
     build: ./soa-backend-route
-    container_name: route-service
+    container_name: route-service1
     networks:
       - develop
     ports:
       - "4848:4848"
-      - "8080:8080"
       - "8181:8181"
     environment:
       - CITY_SERVICE_URL=https://city-service:8443/soa-backend-city-1.0-SNAPSHOT/api/city
-  city-service:
+
+  route-service2:
+    build: ./soa-backend-route
+    container_name: route-service2
+    networks:
+      - develop
+    ports:
+      - "4849:4848"
+      - "8182:8181"
+    environment:
+      - CITY_SERVICE_URL=https://city-service:8443/soa-backend-city-1.0-SNAPSHOT/api/city
+
+  city-service1:
     build: ./soa-backend-city
-    container_name: city-service
+    container_name: city-service1
     depends_on:
       - db
     networks:
       - develop
     ports:
       - "8443:8443"
-      - "9993:9993"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/soa-db
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+      CONTAINER_NAME: city-service1
+      CONTAINER_HOST: city-service1
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+  city-service2:
+    build: ./soa-backend-city
+    container_name: city-service2
+    depends_on:
+      - db
+    networks:
+      - develop
+    ports:
+      - "8444:8443"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/soa-db
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+      CONTAINER_NAME: city-service2
+      CONTAINER_HOST: city-service2
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+  consul:
+    container_name: consul
+    image: consul:1.15.4
+    networks:
+      - develop
+    ports:
+      - "8500:8500"
+      - "8600:8600"
+    volumes:
+      - ./consul/config:/consul/config
+    command: agent -server -bootstrap-expect=1 -ui -client=0.0.0.0
+
   frontend:
     build: ./soa-frontend
     container_name: soa-frontend
@@ -30,10 +77,13 @@ services:
     ports:
       - "8081:80"
     depends_on:
-      - city-service
-      - route-service
+      - city-service1
+      - city-service2
+#      - route-service
+      - route-service1
+      - route-service2
     environment:
-      - VITE_CITY_URL=https://localhost:8443/soa-backend-city-1.0-SNAPSHOT/api/city/
+      - VITE_CITY_URL=http://haproxy:8080/api/city/
       - VITE_ROUTE_URL=https://localhost:8181/soa-backend-route-1.0-SNAPSHOT/api/route/
   db:
     image: postgres
@@ -50,9 +100,28 @@ services:
       - develop
     ports:
       - "5432:5432"
+  haproxy:
+    image: haproxy:2.4
+    container_name: haproxy
+    networks:
+      - develop
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./soa-haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    depends_on:
+      - city-service1
+      - city-service2
+      - route-service1
+      - route-service2
 
 networks:
   develop:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/20
+          gateway: 10.5.0.1
 
 volumes:
   postgres_data:

@@ -1,9 +1,12 @@
-FROM quay.io/wildfly/wildfly:33.0.2.Final-jdk21
+FROM openjdk:17
+ARG JAR_FILE=build/libs/soa-backend-city-1.0-SNAPSHOT.jar
+COPY ${JAR_FILE} app.jar
 
-COPY deployment/module.xml /opt/jboss/wildfly/modules/system/layers/base/org/postgresql/main/
-COPY deployment/postgresql-42.7.4.jar /opt/jboss/wildfly/modules/system/layers/base/org/postgresql/main/
+COPY deployment/city-service.crt city-service.crt
+COPY deployment/route-service.crt route-service.crt
 
-COPY deployment/standalone.xml /opt/jboss/wildfly/standalone/configuration/
-COPY deployment/city-service.jks /opt/jboss/wildfly/standalone/configuration/
+USER root
+RUN keytool -importcert -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit -alias city-service -trustcacerts -file city-service.crt -noprompt
 
-COPY build/libs/soa-backend-city-1.0-SNAPSHOT.war /opt/jboss/wildfly/standalone/deployments/
+
+ENTRYPOINT ["java","-jar","app.jar"]
